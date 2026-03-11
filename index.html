@@ -559,8 +559,9 @@ function fazerLogin() {
   const err = document.getElementById('login-error');
   err.style.display = 'none';
   if(!email || !pass) { err.textContent = "Preencha e-mail e senha."; err.style.display = 'block'; return; }
-  auth.signInWithEmailAndPassword(email, pass).catch(e => {
-    err.textContent = "Erro: E-mail ou senha incorretos.";
+auth.signInWithEmailAndPassword(email, pass).catch(e => {
+    console.error("Motivo do bloqueio:", e);
+    err.textContent = "Erro Firebase: " + e.message; 
     err.style.display = 'block';
   });
 }
@@ -1177,3 +1178,4 @@ function gerarR(reset = true){
 </script>
 </body>
 </html>
+
