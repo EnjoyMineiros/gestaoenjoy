@@ -17,39 +17,46 @@
 // =========================================================================
 // ⚙️ 1. PAINEL DE CONFIGURAÇÃO DO CLIENTE (GERADO PELO SEU GEM IA)
 // =========================================================================
-const APP_CONFIG = {
-  nome_sistema: "Loja de Eletrônicos",
-  tema: {
-    p: "#ffcc00",
-    pd: "#cca300",
-    pl: "#ffdb4d",
-    px: "#fff5cc",
-    bg: "#f4f7f6",
-    bor: "#d1d1cc"
-  },
-  categorias_vendas: ["Periféricos", "Cabos", "Celulares", "Capinhas", "Outros"],
-  categorias_estoque: ["Componentes", "Acessórios", "Embalagens", "Outros"],
-  categorias_despesas: ["Fornecedor", "Equipamento", "Embalagem", "Serviços", "Aluguel / Conta", "Outros"],
-  pagamentos_vendas: ["Dinheiro", "PIX", "Débito", "Crédito", "Compra Online", "Fiado"],
-  pagamentos_compras: ["Dinheiro", "PIX", "Débito", "Crédito", "Boleto", "A prazo", "Outros"],
-  taxas: {
-    debito: 1.5,
-    credito: 3.1,
-    online: 4.0
-  }
-};
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-// =========================================================================
-// 🔑 2. CHAVES DO BANCO DE DADOS (FIREBASE NOVO DO CLIENTE)
-// =========================================================================
-const FIREBASE_CONFIG = {
-  apiKey: "SUA_API_KEY_AQUI",
-  authDomain: "SEU_DOMAIN_AQUI",
-  projectId: "SEU_PROJECT_ID_AQUI",
-  storageBucket: "SEU_BUCKET_AQUI",
-  messagingSenderId: "SEU_SENDER_ID_AQUI",
-  appId: "SEU_APP_ID_AQUI"
-};
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBWkNp8r13UDKDW2dXEW6gVont_5H21NvM",
+    authDomain: "gestaoenjoy.firebaseapp.com",
+    projectId: "gestaoenjoy",
+    storageBucket: "gestaoenjoy.firebasestorage.app",
+    messagingSenderId: "15348849792",
+    appId: "1:15348849792:web:e118b7aad0f6518f461a65"
+  };
+
+  // Inicializa o Firebase e o Banco de Dados
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
+
+<script>
+  const APP_CONFIG = {
+    nome_sistema: "Enjoy Presentes",
+    tema: {
+      p: "#FFD700",
+      pd: "#cca300",
+      pl: "#ffdb4d",
+      px: "#fff5cc",
+      bg: "#f4f7f6",
+      bor: "#d1d1cc"
+    },
+    categorias_vendas: ["Periféricos", "Cabos", "Celulares", "Capinhas", "Outros"],
+    categorias_estoque: ["Componentes", "Acessórios", "Embalagens", "Outros"],
+    categorias_despesas: ["Fornecedor", "Equipamento", "Embalagem", "Serviços", "Aluguel / Conta", "Outros"],
+    pagamentos_vendas: ["Dinheiro", "PIX", "Débito", "Crédito", "Compra Online", "Fiado"],
+    pagamentos_compras: ["Dinheiro", "PIX", "Débito", "Crédito", "Boleto", "A prazo", "Outros"],
+    taxas: {
+      debito: 1.5,
+      credito: 3.1,
+      online: 4.0
+    }
+  };
 </script>
 
 <style>
@@ -1173,4 +1180,5 @@ function gerarR(reset = true){
 }
 </script>
 </body>
+
 </html>
