@@ -14,13 +14,9 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
 <script>
-// =========================================================================
-// ⚙️ 1. PAINEL DE CONFIGURAÇÃO DO CLIENTE (GERADO PELO SEU GEM IA)
-// =========================================================================
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
-<script>
+  // =========================================================================
+  // ⚙️ 1. INICIALIZAÇÃO DO BANCO DE DADOS FIREBASE
+  // =========================================================================
   const firebaseConfig = {
     apiKey: "AIzaSyBWkNp8r13UDKDW2dXEW6gVont_5H21NvM",
     authDomain: "gestaoenjoy.firebaseapp.com",
@@ -30,12 +26,15 @@
     appId: "1:15348849792:web:e118b7aad0f6518f461a65"
   };
 
-  // Inicializa o Firebase e o Banco de Dados
   firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+  const fbDB = firebase.firestore();
+  const auth = firebase.auth();
 </script>
 
 <script>
+  // =========================================================================
+  // ⚙️ 2. PAINEL DE CONFIGURAÇÃO DO CLIENTE (GERADO PELO SEU GEM IA)
+  // =========================================================================
   const APP_CONFIG = {
     nome_sistema: "Enjoy Presentes",
     tema: {
@@ -541,9 +540,6 @@ initThemeAndConfig();
 // =========================================================================
 // 🚀 INÍCIO DO SISTEMA (LÓGICA E BANCO DE DADOS)
 // =========================================================================
-firebase.initializeApp(FIREBASE_CONFIG);
-const fbDB = firebase.firestore();
-const auth = firebase.auth();
 
 auth.onAuthStateChanged(user => {
   if (user) {
@@ -1180,5 +1176,4 @@ function gerarR(reset = true){
 }
 </script>
 </body>
-
 </html>
