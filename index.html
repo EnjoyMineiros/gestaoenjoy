@@ -12,7 +12,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 <script>
   // =========================================================================
   // ⚙️ 1. CONFIGURAÇÃO DO FIREBASE COM SUAS CHAVES CORRETAS
@@ -390,6 +390,10 @@ input:checked+.sl:before{transform:translateX(19px)}
   <h2 class="ttl">💰 Vendas</h2>
   <div class="fc">
     <div class="fg-grid">
+      <div class="fg fl" style="background:#f1f8e9; padding:12px; border-radius:8px; border:2px dashed var(--ok);">
+  <label style="color:var(--ok); font-size:0.85rem;">🔍 Bipar Produto (Clique aqui e passe a pistola)</label>
+  <input id="vsku" type="text" placeholder="Aguardando bipe da pistola..." onkeypress="biparProduto(event)" style="border-color:var(--ok); font-weight:bold;" />
+</div>
       <div class="fg"><label>Cliente</label><input id="vc" type="text" list="vcl"/><datalist id="vcl"></datalist></div>
       <div class="fg"><label>Produto/Serviço *</label><input id="vp" type="text"/></div>
       <div class="fg"><label>Categoria</label><select id="vcat"></select></div>
@@ -433,8 +437,8 @@ input:checked+.sl:before{transform:translateX(19px)}
   <h2 class="ttl">📦 Estoque</h2>
   <div class="fc">
     <div class="fg-grid">
-      <div class="fg"><label>Nome *</label><input id="en" type="text"/></div>
-      <div class="fg"><label>Categoria</label><select id="ecat"></select></div>
+<div class="fg"><label>Nome *</label><input id="en" type="text"/></div>
+<div class="fg"><label>Cód. Barras (Bipe ou crie)</label><div style="display:flex;gap:5px;"><input id="esku" type="text" placeholder="Ex: 789123..."/><button class="btn out sm" onclick="gerarSKU()" type="button" style="padding:4px 8px;" title="Gerar código aleatório">🎲</button></div></div>      <div class="fg"><label>Categoria</label><select id="ecat"></select></div>
       <div class="fg"><label>Quantidade</label><input id="eq" type="number" min="0" value="0"/></div>
       <div class="fg"><label>Qtd. mínima</label><input id="em" type="number" min="0" value="5"/></div>
       <div class="fg"><label>Custo unit. (R$)</label><input id="ec" type="number" min="0" step="0.01"/></div>
@@ -1146,15 +1150,15 @@ function delC(id){conf('Excluir lançamento?',()=>{DB.set(K.c,DB.get(K.c).filter
 function salvarE(){
   const n=gv('en').trim();if(!n)return toast('Item obrigatório!',true);
   const es=DB.get(K.e)||[];
-  es.unshift({id:uid(),nome:n,categoria:gv('ecat'),qtd:Number(gv('eq')||0),min:Number(gv('em')||0),custo:Number(gv('ec')||0),preco:Number(gv('ep2')||0)});
+  es.unshift({id:uid(),nome:n,categoria:gv('ecat'),qtd:Number(gv('eq')||0),min:Number(gv('em')||0),custo:Number(gv('ec')||0),preco:Number(gv('ep2')||0), sku:gv('esku').trim()});
   DB.set(K.e,es); limE(); renderE(); toast('Item salvo no estoque!');
 }
-function limE(){document.getElementById('en').value='';document.getElementById('eq').value='0';document.getElementById('ec').value='';document.getElementById('ep2').value='';}
+function limE(){document.getElementById('en').value='';document.getElementById('eq').value='0';document.getElementById('ec').value='';document.getElementById('ep2').value='';document.getElementById('esku').value='';}
 function renderE(){
   const b=gv('feb').toLowerCase(); 
   let d=(DB.get(K.e)||[]).filter(e=>!b||e.nome.toLowerCase().includes(b));
   d = pagList(d, 'e-pag', 'mudarPagE', 'e');
-  document.getElementById('tbe').innerHTML=d.length?d.map(e=>`<tr><td><strong>${e.nome}</strong></td><td>${e.categoria||'-'}</td><td style="${e.qtd<=e.min?'color:var(--no);font-weight:700':''}">${e.qtd}</td><td>${e.min}</td><td>${brl(e.custo)}</td><td>${brl(e.preco)}</td><td><button class="btn bd sm" onclick="delE('${e.id}')">🗑️</button></td></tr>`).join(''):'<tr><td colspan="7" style="text-align:center;">Nenhum item</td></tr>';
+  document.getElementById('tbe').innerHTML=d.length?d.map(e=>`<tr><td><strong>${e.nome}</strong></td><td>${e.categoria||'-'}</td><td style="${e.qtd<=e.min?'color:var(--no);font-weight:700':''}">${e.qtd}</td><td>${e.min}</td><td>${brl(e.custo)}</td><td>${brl(e.preco)}</td><td><button class="btn out sm" title="Imprimir Etiqueta" onclick="imprimirEtiqueta('${e.id}')">🖨️</button> <button class="btn bd sm" onclick="delE('${e.id}')">🗑️</button></td></tr>`).join(''):'<tr><td colspan="7" style="text-align:center;">Nenhum item</td></tr>';
 }
 function delE(id){conf('Excluir item?',()=>{DB.set(K.e,DB.get(K.e).filter(x=>x.id!==id));renderE();});}
 
@@ -1258,9 +1262,76 @@ function imprimirCupom(pedId) {
   `);
   w.document.close();
 }
+  // ── 11. SISTEMA DE CÓDIGO DE BARRAS (PISTOLA E ETIQUETA) ──
+
+// Gera um código numérico de 12 dígitos aleatório
+function gerarSKU() {
+  document.getElementById('esku').value = Math.floor(Math.random() * 900000000000) + 100000000000;
+}
+
+// Escuta o "Bipe" da pistola na tela de vendas
+function biparProduto(e) {
+  // A pistola aperta a tecla "Enter" (código 13) automaticamente no final do bipe
+  if (e.key === 'Enter' || e.keyCode === 13) {
+    e.preventDefault(); 
+    let skuBipado = document.getElementById('vsku').value.trim();
+    if (!skuBipado) return;
+
+    // Procura o produto no estoque
+    let prod = (DB.get(K.e) || []).find(x => x.sku === skuBipado);
+    
+    if (prod) {
+      // Preenche a tela de vendas esperando a sua confirmação
+      document.getElementById('vp').value = prod.nome;
+      document.getElementById('vu').value = prod.preco;
+      document.getElementById('vcat').value = prod.categoria || 'Outros';
+      document.getElementById('vq').value = '1';
+      calcV(); // Calcula o total
+      
+      toast('✅ Produto identificado!');
+      document.getElementById('vq').focus(); // Joga o mouse para a quantidade
+    } else {
+      toast('❌ Código não encontrado no estoque!', true);
+    }
+    
+    // Limpa o campo da pistola para o próximo bipe
+    document.getElementById('vsku').value = '';
+  }
+}
+
+// Imprime a etiqueta térmica adesiva
+function imprimirEtiqueta(idEstoque) {
+  let prod = (DB.get(K.e) || []).find(x => x.id === idEstoque);
+  if(!prod || !prod.sku) return toast('Este produto não possui código salvo!', true);
+
+  let w = window.open('', '_blank', 'width=400,height=400');
+  w.document.write(`
+    <html><head><title>Etiqueta - ${prod.nome}</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"><\\/script>
+    <style>
+      body { margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; font-family: sans-serif; }
+      .nome { font-size: 14px; font-weight: bold; margin-bottom: 5px; text-align: center; max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+      .preco { font-size: 16px; font-weight: bold; margin-top: 5px; }
+      svg { max-width: 100%; height: auto; }
+    </style>
+    </head><body>
+      <div class="nome">${prod.nome}</div>
+      <svg id="barcode"></svg>
+      <div class="preco">${brl(prod.preco)}</div>
+      <script>
+        window.onload = function() {
+          JsBarcode("#barcode", "${prod.sku}", { format: "CODE128", width: 2, height: 50, displayValue: true, fontSize: 14 });
+          window.setTimeout(function(){ window.print(); window.close(); }, 500);
+        }
+      <\\/script>
+    </body></html>
+  `);
+  w.document.close();
+}
 </script>
 </body>
 </html>
+
 
 
 
