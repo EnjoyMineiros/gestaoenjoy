@@ -514,7 +514,7 @@ input:checked+.sl:before{transform:translateX(19px)}
     <label class="tg"><input type="checkbox" id="mppg" onchange="togF('pago')"><span class="sl"></span></label>
   </div>
   <div class="tr2"><div><div class="tl2">📦 Entregue</div></div><label class="tg"><input type="checkbox" id="mpeg" onchange="togF('entregue')"><span class="sl"></span></label></div>
-<button class="btn bd sm" onclick="delPA()">🗑️ Excluir</button><button class="btn out sm" onclick="editPA()">✏️ Editar</button><button class="btn bp sm" onclick="imprimirCupom(actPed)">🖨️ Imprimir</button><button class="btn bs sm" onclick="abrirLV()">📦 Finalizar / Arquivar</button></div></div></div>
+</div><div class="mf"><button class="btn bd sm" onclick="delPA()">🗑️ Excluir</button><button class="btn out sm" onclick="editPA()">✏️ Editar</button><button class="btn bp sm" onclick="imprimirCupom(actPed)">🖨️ Imprimir</button><button class="btn bs sm" onclick="abrirLV()">📦 Finalizar / Arquivar</button></div></div></div>
 <div class="mo" id="mhc"><div class="mb" style="max-width:600px"><div class="mh"><h3 id="mhctt">👁️ Histórico</h3><button class="mc" onclick="CM('mhc')">✕</button></div><div class="my"><div class="tc" style="box-shadow:none; padding:0;"><table style="min-width:auto;"><thead><tr><th>Data</th><th>Desc</th><th>Valor Bruto</th><th>Status</th></tr></thead><tbody id="tbhc"></tbody></table></div></div><div class="mf"><button class="btn sm" style="background:#eee" onclick="CM('mhc')">Fechar</button></div></div></div>
 
 <div class="mo" id="mlv"><div class="mb" style="max-width:430px"><div class="mh" style="color:var(--ok)"><h3>📦 Finalizar e Arquivar</h3><button class="mc" onclick="CM('mlv')">✕</button></div><div class="my"><p style="font-size:.82rem;margin-bottom:12px;color:var(--tl)">O pedido irá para os <strong>Concluídos</strong>. Os recebimentos (Sinal e Pagamento) são lançados automaticamente na aba Vendas e abatidos das taxas da maquininha.</p><div class="fg-grid" style="gap:9px"><div class="fg fl" style="display:none;"><label>Produto</label><input id="lvp" type="text"/></div><div class="fg" style="display:none;"><label>Valor pendente a lançar</label><input id="lvt" type="number" step="0.01"/></div><div class="fg fl"><label>📦 Abater estoque (opcional)</label><select id="lvest" onchange="document.getElementById('lvqw').style.display=this.value?'block':'none'"><option value="">— Não abater —</option></select></div><div class="fg" id="lvqw" style="display:none"><label>Qtd a abater</label><input id="lvq" type="number" min="1" value="1"/></div></div></div><div class="mf"><button class="btn sm" style="background:#eee" onclick="CM('mlv')">Cancelar</button><button class="btn bs sm" onclick="confLV()">✅ Arquivar Pedido</button></div></div></div>
@@ -1334,10 +1334,10 @@ function imprimirEtiqueta(idEstoque) {
   `);
   w.document.close();
 }
-}
 </script>
 </body>
 </html>
+
 
 
 
