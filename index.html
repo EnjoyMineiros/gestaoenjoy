@@ -1300,37 +1300,45 @@ function biparProduto(e) {
 }
 
 // Imprime a etiqueta térmica adesiva
+// Imprime a etiqueta térmica adesiva (CORRIGIDA COM IMAGEM)
 function imprimirEtiqueta(idEstoque) {
   let prod = (DB.get(K.e) || []).find(x => x.id === idEstoque);
   if(!prod || !prod.sku) return toast('Este produto não possui código salvo!', true);
 
+  // Cria o código de barras como uma imagem invisível
+  let canvas = document.createElement('canvas');
+  try {
+    JsBarcode(canvas, prod.sku, { format: "CODE128", width: 2, height: 50, displayValue: true, fontSize: 14 });
+  } catch(e) {
+    return toast('Aguarde o sistema carregar e tente novamente.', true);
+  }
+  let barcodeImg = canvas.toDataURL("image/png");
+
+  // Abre a janela e joga a imagem pronta lá dentro
   let w = window.open('', '_blank', 'width=400,height=400');
   w.document.write(`
     <html><head><title>Etiqueta - ${prod.nome}</title>
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"><\\/script>
     <style>
       body { margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; font-family: sans-serif; }
       .nome { font-size: 14px; font-weight: bold; margin-bottom: 5px; text-align: center; max-width: 200px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
       .preco { font-size: 16px; font-weight: bold; margin-top: 5px; }
-      svg { max-width: 100%; height: auto; }
     </style>
     </head><body>
       <div class="nome">${prod.nome}</div>
-      <svg id="barcode"></svg>
+      <img src="${barcodeImg}" alt="Código de Barras" style="max-width:100%; height:auto;" />
       <div class="preco">${brl(prod.preco)}</div>
       <script>
-        window.onload = function() {
-          JsBarcode("#barcode", "${prod.sku}", { format: "CODE128", width: 2, height: 50, displayValue: true, fontSize: 14 });
-          window.setTimeout(function(){ window.print(); window.close(); }, 500);
-        }
+        setTimeout(function(){ window.print(); window.close(); }, 500);
       <\\/script>
     </body></html>
   `);
   w.document.close();
 }
+}
 </script>
 </body>
 </html>
+
 
 
 
