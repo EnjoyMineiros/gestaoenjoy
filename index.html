@@ -17,14 +17,23 @@
   // =========================================================================
   // ⚙️ 1. INICIALIZAÇÃO DO BANCO DE DADOS FIREBASE
   // =========================================================================
-  const firebaseConfig = {
-    apiKey: "AIzaSyBWkNp8r13UDKDW2dXEW6gVont_5H21NvM",
-    authDomain: "gestaoenjoy.firebaseapp.com",
-    projectId: "gestaoenjoy",
-    storageBucket: "gestaoenjoy.firebasestorage.app",
-    messagingSenderId: "15348849792",
-    appId: "1:15348849792:web:e118b7aad0f6518f461a65"
-  };
+  // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBWkNp8r13UDkDW2dXEw6gVont_5H21NvM",
+  authDomain: "gestaoenjoy.firebaseapp.com",
+  projectId: "gestaoenjoy",
+  storageBucket: "gestaoenjoy.firebasestorage.app",
+  messagingSenderId: "15348849792",
+  appId: "1:15348849792:web:e118b7aad0f6518f461a65"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
   firebase.initializeApp(firebaseConfig);
   const fbDB = firebase.firestore();
@@ -1178,4 +1187,5 @@ function gerarR(reset = true){
 </script>
 </body>
 </html>
+
 
