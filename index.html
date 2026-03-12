@@ -13,6 +13,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
 <script>
   // =========================================================================
   // ⚙️ 1. CONFIGURAÇÃO DO FIREBASE COM SUAS CHAVES CORRETAS
@@ -390,10 +391,15 @@ input:checked+.sl:before{transform:translateX(19px)}
   <h2 class="ttl">💰 Vendas</h2>
   <div class="fc">
     <div class="fg-grid">
-      <div class="fg fl" style="background:#f1f8e9; padding:12px; border-radius:8px; border:2px dashed var(--ok);">
-  <label style="color:var(--ok); font-size:0.85rem;">🔍 Bipar Produto (Clique aqui e passe a pistola)</label>
-  <input id="vsku" type="text" placeholder="Aguardando bipe da pistola..." onkeypress="biparProduto(event)" style="border-color:var(--ok); font-weight:bold;" />
-</div>
+ <div class="fg fl" style="background:#f1f8e9; padding:12px; border-radius:8px; border:2px dashed var(--ok);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+          <label style="color:var(--ok); font-size:0.85rem; margin:0;">🔍 Bipar Produto (Pistola ou Câmera)</label>
+          <button class="btn out sm" onclick="abrirCamera()" type="button" style="padding:2px 8px; font-size:1.1rem; border-color:var(--ok); color:var(--ok);" title="Ler com a Câmera">📷</button>
+        </div>
+        <input id="vsku" type="text" placeholder="Aguardando bipe ou leitura..." onkeypress="biparProduto(event)" style="border-color:var(--ok); font-weight:bold;" />
+        
+        <div id="reader" style="width: 100%; margin-top: 10px; display: none; border-radius: 8px; overflow: hidden; border: 1px solid var(--ok);"></div>
+      </div>
       <div class="fg"><label>Cliente</label><input id="vc" type="text" list="vcl"/><datalist id="vcl"></datalist></div>
       <div class="fg"><label>Produto/Serviço *</label><input id="vp" type="text"/></div>
       <div class="fg"><label>Categoria</label><select id="vcat"></select></div>
@@ -1281,34 +1287,60 @@ function gerarSKU() {
 
 // Escuta o "Bipe" da pistola na tela de vendas
 function biparProduto(e) {
-  // A pistola aperta a tecla "Enter" (código 13) automaticamente no final do bipe
   if (e.key === 'Enter' || e.keyCode === 13) {
     e.preventDefault(); 
     let skuBipado = document.getElementById('vsku').value.trim();
     if (!skuBipado) return;
 
-    // Procura o produto no estoque
     let prod = (DB.get(K.e) || []).find(x => x.sku === skuBipado);
-    
     if (prod) {
-      // Preenche a tela de vendas esperando a sua confirmação
       document.getElementById('vp').value = prod.nome;
       document.getElementById('vu').value = prod.preco;
       document.getElementById('vcat').value = prod.categoria || 'Outros';
       document.getElementById('vq').value = '1';
-      calcV(); // Calcula o total
-      
+      calcV(); 
       toast('✅ Produto identificado!');
-      document.getElementById('vq').focus(); // Joga o mouse para a quantidade
+      document.getElementById('vq').focus(); 
     } else {
       toast('❌ Código não encontrado no estoque!', true);
     }
-    
-    // Limpa o campo da pistola para o próximo bipe
     document.getElementById('vsku').value = '';
   }
 }
 
+// Função para abrir a câmara do telemóvel e ler códigos
+let leitorCamera;
+function abrirCamera() {
+  const divLeitor = document.getElementById('reader');
+  
+  if (divLeitor.style.display === 'block') {
+    if (leitorCamera) {
+      leitorCamera.stop().then(() => {
+        divLeitor.style.display = 'none';
+      }).catch(err => console.error(err));
+    }
+    return;
+  }
+
+  divLeitor.style.display = 'block';
+  leitorCamera = new Html5Qrcode("reader");
+  
+  leitorCamera.start(
+    { facingMode: "environment" }, 
+    { fps: 10, qrbox: { width: 250, height: 100 } }, 
+    (codigoLido) => {
+      document.getElementById('vsku').value = codigoLido;
+      leitorCamera.stop().then(() => {
+        divLeitor.style.display = 'none';
+        biparProduto({ key: 'Enter', preventDefault: () => {} });
+      });
+    },
+    (erroDeLeitura) => {}
+  ).catch((err) => {
+    toast("⚠️ Permita o acesso à câmara no seu navegador!", true);
+    divLeitor.style.display = 'none';
+  });
+}
 // Imprime a etiqueta térmica adesiva
 // Imprime a etiqueta térmica adesiva (CORRIGIDA COM IMAGEM)
 function imprimirEtiqueta(idEstoque) {
@@ -1347,6 +1379,7 @@ function imprimirEtiqueta(idEstoque) {
 </script>
 </body>
 </html>
+
 
 
 
