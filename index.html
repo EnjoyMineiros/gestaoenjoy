@@ -273,6 +273,8 @@ input:checked+.sl:before{transform:translateX(19px)}
   #kb-q { flex: 1; }
   .kc { min-width: 85vw; max-width: 85vw; scroll-snap-align: center; }
   #kb { scroll-snap-type: x mandatory; padding-bottom: 25px; }
+  /* Correção do Botão Nova Coluna no Mobile */
+  .bnc { min-width: 85vw !important; max-width: 85vw !important; height: 80px; border-radius: 12px; scroll-snap-align: center; margin-right: 15px; }
   
   /* 4. Formulários amigáveis para Touch (Evita zoom no iOS) */
   input, select, textarea { font-size: 16px !important; padding: 10px; }
@@ -1208,5 +1210,6 @@ function gerarR(reset = true){
 </script>
 </body>
 </html>
+
 
 
