@@ -1174,7 +1174,17 @@ function renderCl(){
   const b=gv('fclb').toLowerCase();
   let d=(DB.get(K.cl)||[]).filter(c=>!b||c.nome.toLowerCase().includes(b)||(c.tel&&c.tel.includes(b)));
   d = pagList(d, 'cl-pag', 'mudarPagCl', 'cl');
-  document.getElementById('tbcl').innerHTML=d.length?d.map(c=>`<tr><td><strong>${c.nome}</strong></td><td>${c.tel||'-'}</td><td>${c.cidade||'-'}</td><td><button class="btn bp sm" onclick="verHist('${c.nome}')">👁️ Histórico</button> <button class="btn bd sm" onclick="delCl('${c.id}')">🗑️</button></td></tr>`).join(''):'<tr><td colspan="4" style="text-align:center;">Nenhum cliente encontrado</td></tr>';
+  
+  document.getElementById('tbcl').innerHTML=d.length?d.map(c=>{
+    // Limpa o número para o padrão do WhatsApp (só números)
+    let num = c.tel ? c.tel.replace(/\D/g,'') : '';
+    // Cria o link clicável se o número for válido, senão mostra normal
+    let telHtml = num.length >= 10 
+      ? `<a href="https://wa.me/55${num}" target="_blank" style="color:#25D366; font-weight:bold; text-decoration:none;" title="Chamar no WhatsApp">💬 ${c.tel}</a>` 
+      : (c.tel || '-');
+      
+    return `<tr><td><strong>${c.nome}</strong></td><td>${telHtml}</td><td>${c.cidade||'-'}</td><td><button class="btn bp sm" onclick="verHist('${c.nome}')">👁️ Histórico</button> <button class="btn bd sm" onclick="delCl('${c.id}')">🗑️</button></td></tr>`;
+  }).join('') : '<tr><td colspan="4" style="text-align:center;">Nenhum cliente encontrado</td></tr>';
 }
 function delCl(id){conf('Excluir cliente permanentemente?',()=>{DB.set(K.cl,DB.get(K.cl).filter(x=>x.id!==id));renderCl();});}
 function verHist(nome){
@@ -1337,6 +1347,7 @@ function imprimirEtiqueta(idEstoque) {
 </script>
 </body>
 </html>
+
 
 
 
