@@ -1206,9 +1206,8 @@ function gerarR(reset = true){
 
   document.getElementById('tbrv').innerHTML=movs.length?movs.map(m=>`<tr><td>${fd(m.d)}</td><td><span class="bj ${m.s>0?'g':((m.t||'').includes('Retirada')||(m.t||'').includes('Pró-labore')?'o':'r')}">${m.t||'Geral'}</span><br><small style="color:var(--tl)">${m.pg||''}</small></td><td>${m.desc||'-'}</td><td style="font-weight:700;">${m.s>0?'+':'-'} ${(m.b && m.b > m.v) ? brlLq(m.b, m.v) : brl(m.v)}</td></tr>`).join(''):'<tr><td colspan="4" style="text-align:center;">Sem dados no período</td></tr>';
 }
-  // ── FUNÇÃO DE IMPRESSÃO DE CUPOM / ETIQUETA ──
+// ── FUNÇÃO DE IMPRESSÃO DE CUPOM / ETIQUETA (CORRIGIDA) ──
 function imprimirCupom(pedId) {
-  // Procura o pedido no Kanban ou nos Concluídos
   let p = DB.get(K.p).find(x => x.id === pedId) || DB.get(K.co).find(x => x.id === pedId);
   if(!p) return toast('Pedido não encontrado!', true);
 
@@ -1216,12 +1215,10 @@ function imprimirCupom(pedId) {
   let sinal = Number(p.sinal || 0);
   let rest = total - sinal;
 
-  // Abre uma janela invisível para montar o cupom
   let w = window.open('', '_blank', 'width=400,height=600');
   w.document.write(`
     <html><head><title>Cupom - ${p.cliente}</title>
     <style>
-      /* Formatação exata para impressoras térmicas */
       body { font-family: 'Courier New', Courier, monospace; width: 280px; margin: 0 auto; padding: 10px 0; color: #000; font-size: 14px; }
       .ctr { text-align: center; }
       .b { font-weight: bold; }
@@ -1235,40 +1232,28 @@ function imprimirCupom(pedId) {
         <h2 style="margin:0; font-size: 1.2rem;">${APP_CONFIG.nome_sistema}</h2>
         <p style="margin:5px 0; font-size: 0.85rem;">Documento Auxiliar - Não fiscal</p>
       </div>
-      
       <div class="lin"></div>
-      
       <p class="b">CLIENTE: ${p.cliente}</p>
       <p>WhatsApp: ${p.tel || 'Não informado'}</p>
       <p>Data Entrega: ${p.entrega ? fd(p.entrega) : 'A combinar'}</p>
-      
       <div class="lin"></div>
-      
       <p class="b" style="margin-bottom:8px;">DESCRIÇÃO DO PEDIDO:</p>
       <p style="font-size: 0.9rem;">${p.desc.replace(/\n/g, '<br>')}</p>
-      
       <div class="lin"></div>
-      
       <div class="row"><span>Total Bruto:</span><span class="b">${brl(total)}</span></div>
       <div class="row"><span>Sinal Pago:</span><span>${brl(sinal)}</span></div>
       <div class="row" style="font-size: 1.1rem; margin-top: 8px;"><span>Restante:</span><span class="b">${brl(rest)}</span></div>
-      
       <div class="lin"></div>
-      
       <div class="ctr b" style="font-size:1.3rem; margin: 15px 0;">
         ${p.pago ? '*** PAGO ***' : '*** PENDENTE ***'}
       </div>
-      
       <div class="lin"></div>
-      
       <div class="ctr" style="font-size:0.85rem; margin-top:15px;">
         Obrigado pela preferência!<br>Volte sempre!
       </div>
-      
       <script>
-        // Dispara a impressão e fecha a janela logo em seguida
-        window.onload = function() { window.print(); window.close(); }
-      </script>
+        window.onload = function() { window.print(); window.setTimeout(function(){window.close();}, 500); }
+      <\\/script> 
     </body></html>
   `);
   w.document.close();
@@ -1276,6 +1261,7 @@ function imprimirCupom(pedId) {
 </script>
 </body>
 </html>
+
 
 
 
