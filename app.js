@@ -871,18 +871,7 @@ function imprimirEtiqueta(idEstoque) {
     </body></html>
   `);
   w.document.close();
-}// =========================================================================
-// ⚙️ 1. CONFIGURAÇÃO DO FIREBASE COM SUAS CHAVES CORRETAS
-// =========================================================================
-const firebaseConfig = {
-  apiKey: "AIzaSyBWkNp8r13UDkDW2dXEw6gVont_5H21NvM",
-  authDomain: "gestaoenjoy.firebaseapp.com",
-  projectId: "gestaoenjoy",
-  storageBucket: "gestaoenjoy.firebasestorage.app",
-  messagingSenderId: "15348849792",
-  appId: "1:15348849792:web:e118b7aad0f6518f461a65"
-};
-
+}
 // =========================================================================
 // ⚙️ 2. PAINEL DE CONFIGURAÇÃO DO CLIENTE
 // =========================================================================
